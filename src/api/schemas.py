@@ -1,3 +1,4 @@
+import datetime
 from pydantic import BaseModel, FilePath, Json
 
 
@@ -14,7 +15,7 @@ class RecipeDish(BaseModel):
     description: str
     ingredients: Json
     recipe: str
-    published: str
+    published: datetime.datetime
     auhtor: str
     category: CategoryDish.name_category
     image: FilePath

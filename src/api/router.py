@@ -1,4 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+
+from api.database import RecipeORM
 
 
 router = APIRouter(prefix='/api', tags=['api'])
@@ -6,8 +8,20 @@ router = APIRouter(prefix='/api', tags=['api'])
 
 @router.get('/last_add_dish',
             description='Получение 10 последних рецептов блюд')
-async def get_ten_recipe_dish():
-    return {'message': 'Api recipe dish'}
+async def get_last_recipes() -> dict:
+    result = RecipeORM.select_last_recipes()
+    if not result:
+        raise HTTPException(status_code=404)
+
+    last_recipe = {i.id: {'name': i.name,
+                          'slug': i.slug,
+                          'category': i.category,
+                          'description': i.description,
+                          'published': i.published,
+                          'image': i.image,
+                          'author': i.author} for i in result}
+
+    return last_recipe
 
 
 @router.get('/dish/{slug_dish}',
